@@ -4,6 +4,7 @@ import zipfile
 import os
 import sys
 import glob
+import py7zr
 import pandas as pd
 from unzipUtils import UnzipUtils
 
@@ -70,6 +71,9 @@ class FolderInterface:
     def unzipAllBtn(self):
         zip1 = UnzipUtils(self.opened_dir)
         zip1.unzipAll()
+
+    def unzip7zBtn(self):
+        zip2 =
 
     def deleteZipFiles(self):
         for zfile in self.zip_files:
