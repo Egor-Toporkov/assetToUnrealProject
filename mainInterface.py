@@ -5,6 +5,7 @@ import os
 import sys
 import glob
 import pandas as pd
+from unzipUtils import UnzipUtils
 
 THEME_COLOR = "#434443"
 FONT_COLOR = "#000000"
@@ -33,27 +34,27 @@ class FolderInterface:
         self.central_canvas = Canvas(
             width=200, height=200, highlightthickness=0, bg=FONT_COLOR,)
         self.central_text = self.central_canvas.create_text(
-            150, 75, width=200, text="", fill=FONT_COLOR, font=("Arrial", 20, "italic"))
-        self.central_canvas.grid(row=0, column=0, columnspan=3, pady=50)
+            150, 75, width=200, text="", fill="white", font=("Arial", 20, "italic"))
+        self.central_canvas.grid(row=2, column=0, columnspan=3, pady=50)
 
         # unzip button
         self.unzip_btn_image = PhotoImage(file="image/button_unzip.png")
         self.unzip_btn = Button(
-            image=self.unzip_btn_image, bd=0, highlightthickness=0, bg=THEME_COLOR)
+            image=self.unzip_btn_image, bd=0, highlightthickness=0, bg=THEME_COLOR, command=self.unzipAllBtn)
         self.unzip_btn.grid(row=5, column=1)
 
         # TODO add command
         # csv exporter
         self.csv_btn_image = PhotoImage(file="image/button_csv.png")
         self.csv_btn = Button(image=self.csv_btn_image,
-                              bd=0, highlightthickness=0, bg=THEME_COLOR)
+                              bd=0, highlightthickness=0, bg=THEME_COLOR, command=self.exportCsv)
         self.csv_btn.grid(row=6, column=1)
 
         # delete button
         self.delete_btn_image = PhotoImage(file="image/button_delete.png")
         self.delete_btn = Button(image=self.delete_btn_image,
-                                 bd=0, highlightthickness=0, bg=THEME_COLOR)
-        self.delete_btn.grid(row=6, column=1)
+                                 bd=0, highlightthickness=0, bg=THEME_COLOR, command=self.deleteZipFiles)
+        self.delete_btn.grid(row=7, column=1)
 
         self.window.mainloop()
 
@@ -65,6 +66,31 @@ class FolderInterface:
             self.opened_dir) if file .endswith(".zip")]
         self.central_canvas.itemconfig(self.central_text, text=f"{len(
             self.zip_files)} zip files found in: {self.opened_dir}")
+
+    def unzipAllBtn(self):
+        zip1 = UnzipUtils(self.opened_dir)
+        zip1.unzipAll()
+
+    def deleteZipFiles(self):
+        for zfile in self.zip_files:
+            os.remove(self.opened_dir + "/" + zfile)
+            print("Done removing files")
+
+    def exportCsv(self):
+        dirpath = self.opened_dir
+        fbx_files = []
+
+        for x in os.walk(dirpath):
+            for y in glob.glob(os.path.join(x[0], "*.fbx")):
+                fbx_files.append(y)
+
+        h = {"fbx_files": fbx_files}
+
+        df = pd.DataFrame(h)
+        df.to_csv("file_list.csv")
+
+        data = pd.read_csv("file_list.csv")
+        print(data)
 
 
 if __name__ == "__main__":
