@@ -18,7 +18,7 @@ class UnzipUtils:
             print(f"Done extracting {zipf}")
         print("All files unzipped")
 
-    def deleateZipFiles(self):
+    def deleteZipFiles(self):
         zipfiles = [file for file in os.listdir(
             self.dirpath) if file.endswith(".zip")]
         for zipf in zipfiles:
@@ -29,7 +29,7 @@ if __name__ == "__main__":
     folder1 = UnzipUtils(DIRPATH)
 
     thread1 = threading.Thread(target=folder1.unzipAll)
-    thread2 = threading.Thread(target=folder1.deleateZipFiles)
+    thread2 = threading.Thread(target=folder1.deleteZipFiles)
 
     thread1.start()
     thread1.join
